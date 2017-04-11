@@ -4,16 +4,16 @@
 MAIL_SERVER='smtp.ym.163.com:465'
 
 # smtp server login name
-MAIL_LOGIN='szshouko-fm@sz-nicchu.com'
+MAIL_LOGIN='user@example.com'
 
 # smtp account password
-MAIL_PASSWORD='111111'
+MAIL_PASSWORD='mypassword'
 
 # from mail address
-MAIL_FROM=MAIL_LOGIN
+MAIL_FROM='user@example.com'
 
-# mail dir, the temp mail is stored in ($MAIL_DIR/sendbox $MAIL_DIR/draft)
+# mail dir, the temp mail is stored in ($MAIL_DIR/outbox $MAIL_DIR/draft)
 MAIL_DIR='/var/mail'
 
 # debug True/False
-DEBUG=True
+DEBUG=False
