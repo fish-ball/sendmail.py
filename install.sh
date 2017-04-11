@@ -9,6 +9,7 @@ TARGET=/usr/share/sendmail.py
 #  exit 1 
 #fi
 mv -f /usr/sbin/sendmail /usr/sbin/sendmail.bak
+rm /usr/sbin/sendmaild
 
 mkdir -p $TARGET
 cp $DIR/*.py $TARGET
