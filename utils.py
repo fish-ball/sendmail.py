@@ -27,7 +27,7 @@ def generate_mail_file_name():
    from datetime import datetime
    from random import randint
    return datetime.now().strftime('%Y%m%d%H%M%S') + \
-       '_{:06d}'.format(randint(0,999999)) + '.eml'
+       '_{0:06d}'.format(randint(0,999999)) + '.eml'
     
 
 def get_lock(process_name):
