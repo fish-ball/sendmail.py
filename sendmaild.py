@@ -49,7 +49,7 @@ if __name__ == '__main__':
             to = mail['to']
             if mail['Cc']:
                 to += ', ' + mail['Cc']
-            if mail['Bcc']
+            if mail['Bcc']:
                 to += ', ' + mail['Bcc']
             to = list(set(
                 [addr.strip() for addr in to.split(',') if '@' in addr]
