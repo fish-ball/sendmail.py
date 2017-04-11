@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 mail(
 '57082212@qq.com',   
