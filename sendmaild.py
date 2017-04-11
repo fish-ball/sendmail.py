@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# TODO: 日志记录尚未完善
+
 import os.path
 import sys 
 
@@ -38,16 +40,23 @@ if __name__ == '__main__':
         outbox_file = os.path.join(outbox_dir, filename)
         errorbox_file = os.path.join(errorbox_dir, filename)
         mail_content = open(draft_file, 'r').read()
+
+        mail = email.message_from_string(mail_content)
         os.unlink(draft_file)
 
         try:
             mail = email.message_from_string(mail_content)
-
-            s.sendmail(
-                settings.MAIL_FROM or settings.MAIL_FROM, 
-                mail['to'], 
-                mail.as_string()
-            )
+            to = mail['to']
+            if mail['Cc']:
+                to += ', ' + mail['Cc']
+            if mail['Bcc']
+                to += ', ' + mail['Bcc']
+            to = list(set(
+                [addr.strip() for addr in to.split(',') if '@' in addr]
+            ))
+            assert to, 'No valid recepients.'
+            #print(to)
+            s.sendmail(settings.MAIL_FROM, to, mail.as_string())
             open(outbox_file, 'w').write(mail_content)
         except Exception as e:
             open(errorbox_file, 'w').write(mail_content)
