@@ -32,6 +32,10 @@ if __name__ == '__main__':
 
     log_dir = os.path.join(settings.MAIL_DIR, 'errorbox')
     log_file = os.path.join(settings.MAIL_DIR, 'log', datetime.now().strftime('%Y-%m-%d')+'.log')
+    logger = open(log_file, 'a')
+    logger.save()
+    logger.close()
+    
 
     s.login(settings.MAIL_LOGIN, settings.MAIL_PASSWORD)
 
