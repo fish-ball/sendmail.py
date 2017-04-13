@@ -15,5 +15,8 @@ MAIL_FROM='user@example.com'
 # mail dir, the temp mail is stored in ($MAIL_DIR/outbox $MAIL_DIR/draft)
 MAIL_DIR='/var/mail'
 
+# recepients more than this number would split to multi mail
+BATCH_SIZE=100
+
 # debug True/False
 DEBUG=False

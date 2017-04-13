@@ -56,7 +56,12 @@ if __name__ == '__main__':
             ))
             assert to, 'No valid recepients.'
             #print(to)
-            s.sendmail(settings.MAIL_FROM, to, mail.as_string())
+            while to:
+                batch = to[:settings.BATCH_SIZE]
+                print('<<<<<<<<<<<< BATCH: '+ len(batch))
+                print(batch)
+                to[:settings.BATCH_SIZE] = []
+		s.sendmail(settings.MAIL_FROM, batch, mail.as_string())
             open(outbox_file, 'w').write(mail_content)
         except Exception as e:
             open(errorbox_file, 'w').write(mail_content)
