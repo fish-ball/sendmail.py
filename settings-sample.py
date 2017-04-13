@@ -16,7 +16,8 @@ MAIL_FROM='user@example.com'
 MAIL_DIR='/var/mail'
 
 # recepients more than this number would split to multi mail
-BATCH_SIZE=100
+# http://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac2cbaa9818223de0ad
+BATCH_SIZE=40
 
 # debug True/False
 DEBUG=False
