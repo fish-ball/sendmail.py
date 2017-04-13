@@ -6,8 +6,11 @@ import sys
 path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(path)
 
+import re
+
 import settings
 import errno
+
 
 def prepare_dir():
     from os import makedirs, chmod
@@ -23,12 +26,13 @@ def prepare_dir():
             else:
                 print(e)
 
+
 def generate_mail_file_name():
    from datetime import datetime
    from random import randint
    return datetime.now().strftime('%Y%m%d%H%M%S') + \
        '_{0:06d}'.format(randint(0,999999)) + '.eml'
-    
+
 
 def get_lock(process_name):
     import socket
@@ -44,16 +48,28 @@ def get_lock(process_name):
         print('Another process running, process cancelled...')
         sys.exit()
 
-    
+
+def get_recipients(mail, type=''):
+    data = dict(
+        to=list(set([addr.strip() for addr in re.split(r'[,;]', mail['to'] or '') if '@' in addr])),
+        cc=list(set([addr.strip() for addr in re.split(r'[,;]', mail['cc'] or '') if '@' in addr])),
+        bcc=list(set([addr.strip() for addr in re.split(r'[,;]', mail['bcc'] or '') if '@' in addr])),
+    )
+    if type:
+        return data.get(type, [])
+    return list(set(data['to'] + data['cc'] + data['bcc']))
+
+
 def split_mail(mail_content, batch_size):
 
     import email
     import re
-    mail = email.message_from_string(mail_content)
-    to = list(set([addr.strip() for addr in re.split(r'[,;]', mail['to'] or '') if '@' in addr]))
-    cc = list(set([addr.strip() for addr in re.split(r'[,;]', mail['cc'] or '') if '@' in addr]))
-    bcc = list(set([addr.strip() for addr in re.split(r'[,;]', mail['bcc'] or '') if '@' in addr]))
 
+    mail = email.message_from_string(mail_content)
+
+    to = get_receipients(mail, 'to')
+    cc = get_receipients(mail, 'cc')
+    bcc = get_receipients(mail, 'bcc')
     receivers = list(set(to + cc + bcc))
 
     mails = []
@@ -75,4 +91,4 @@ def split_mail(mail_content, batch_size):
         mails.append(sub_mail.as_string())
 
     return mails
-    
+

@@ -12,12 +12,12 @@ MAIL_PASSWORD='mypassword'
 # from mail address
 MAIL_FROM='user@example.com'
 
-# mail dir, the temp mail is stored in ($MAIL_DIR/outbox $MAIL_DIR/draft)
+# mail dir, the temp mail is stored in (outbox, draft, errorbox, log)
 MAIL_DIR='/var/mail'
 
 # recepients more than this number would split to multi mail
 # http://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac2cbaa9818223de0ad
-BATCH_SIZE=40
+BATCH_SIZE=20
 
 # debug True/False
 DEBUG=False
@@ -39,4 +39,4 @@ IP每小时RCPT命令用户不存在比例上限(单位%):50%。
 IP当天连接数上限:50000次。
 """
 MAIL_QUOTA_DAY=1000
-MAIL_QUOTA_15MIN=500
+MAIL_QUOTA_RUN=20

@@ -1,26 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: 日志记录尚未完善
-# TODO: 发信压力自动拆分尚未完善
-
 import os.path
-import sys 
+import sys
 
 path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(path)
 
-import smtplib
-import email
-
 import settings
 import utils
 
-#def get_recipients(addr_list_str):
-#    return list(set(
-#        [addr.strip() for addr in addr_list_str.split(',') if '@' in addr]
-#    ))
+import smtplib
+import email
+import re
 
+from datetime import datetime
 
 if __name__ == '__main__':
 
@@ -36,7 +30,16 @@ if __name__ == '__main__':
     outbox_dir = os.path.join(settings.MAIL_DIR, 'outbox')
     errorbox_dir = os.path.join(settings.MAIL_DIR, 'errorbox')
 
+    log_dir = os.path.join(settings.MAIL_DIR, 'errorbox')
+    log_file = os.path.join(settings.MAIL_DIR, 'log', datetime.now().strftime('%Y-%m-%d')+'.log')
+
     s.login(settings.MAIL_LOGIN, settings.MAIL_PASSWORD)
+
+    quota = settings.MAIL_QUOTA_RUN
+    quota_day = settings.MAIL_QUOTA_DAY - sum([1 for line in open(log_file, 'r') if 'OK' in line])
+
+    print('quota: ', quota)
+    print('quota_day: ', quota_day)
 
     for filename in os.listdir(draft_dir):
 
@@ -46,31 +49,33 @@ if __name__ == '__main__':
         draft_file = os.path.join(draft_dir, filename)
         outbox_file = os.path.join(outbox_dir, filename)
         errorbox_file = os.path.join(errorbox_dir, filename)
-        mail_content = open(draft_file, 'r').read()
 
+        mail_content = open(draft_file, 'r').read()
         mail = email.message_from_string(mail_content)
+        to = utils.get_recipients(mail)
+
+        if len(to) > quota or len(to) > quota_day:
+            break
+
         os.unlink(draft_file)
+
+        logger = open(log_file, 'a')
 
         try:
             mail = email.message_from_string(mail_content)
-            to = mail['to']
-            if mail['cc']:
-                to += ', ' + mail['cc']
-            if mail['bcc']:
-                to += ', ' + mail['bcc']
-            to = list(set(
-                [addr.strip() for addr in to.split(',') if '@' in addr]
-            ))
-            assert to, 'No valid recepients.'
-            while to:
-                batch = to[:settings.BATCH_SIZE]
-                print('<<<<<<<<<<<< BATCH: %d' % len(batch))
-                print(batch)
-                to[:settings.BATCH_SIZE] = []
-		s.sendmail(settings.MAIL_FROM, batch, mail.as_string())
+            
+            s.sendmail(settings.MAIL_FROM, to, mail.as_string())
+            for addr in to:
+                quota -= 1
+                quota_day -= 1
+                logger.write('[%s] OK   %s >> %s\n' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), filename, addr))
             open(outbox_file, 'w').write(mail_content)
         except Exception as e:
             print('!!!!!!!!!!!!!!! <Exception> %s' % e)
+            for addr in to:
+                logger.write('[%s] FAIL %s >> %s\n' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), filename, addr))
             open(errorbox_file, 'w').write(mail_content)
+        
+        logger.close()
 
     s.quit()
