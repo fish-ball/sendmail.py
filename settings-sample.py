@@ -38,5 +38,9 @@ IP每小时MAIL命令用户不存在比例上限(单位%):50%。
 IP每小时RCPT命令用户不存在比例上限(单位%):50%。
 IP当天连接数上限:50000次。
 """
+
+# daily recepient quota
 MAIL_QUOTA_DAY=1000
+
+# send receipient quota in one batch, should be configured to a max allow send count in one cron run
 MAIL_QUOTA_RUN=20
