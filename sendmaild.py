@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # TODO: 日志记录尚未完善
+# TODO: 发信压力自动拆分尚未完善
 
 import os.path
 import sys 

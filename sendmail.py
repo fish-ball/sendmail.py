@@ -16,26 +16,11 @@ if __name__ == '__main__':
 
     utils.prepare_dir()
 
-    #from email.mime.text import MIMEText
-    from random import random
-    mail = open(os.path.join(
-        settings.MAIL_DIR, 'draft', utils.generate_mail_file_name()
-    ), 'w')
-    #mail = email.message_from_string(stdin.read())
-    mail.write(stdin.read())
-    mail.close()
+    # Split the mail by recepients and save to draft queue
+    for mail_content in utils.split_mail(stdin.read(), settings.BATCH_SIZE or 20):
+        mail = open(os.path.join(settings.MAIL_DIR, 'draft', utils.generate_mail_file_name()), 'w')
+        mail.write(mail_content)
+        mail.close()
 
     exit()
     
-
-#f = open('mail.eml', 'wb')
-#f.write(stdin.read())
-#f.close()
-#exit()
-#
-#'''To: 57082212@qq.com
-#Subject: =?UTF-8?B?5L2g5aW9?=
-#X-PHP-Originating-Script: 1000:test.php
-#Content-type: text/plain; charset=utf-8;
-#From: Shenzhen JP <szshouko-fm@sz-nicchu.com>
-#This is a 特色他 伊妹儿'''

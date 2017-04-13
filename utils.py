@@ -45,3 +45,34 @@ def get_lock(process_name):
         sys.exit()
 
     
+def split_mail(mail_content, batch_size):
+
+    import email
+    import re
+    mail = email.message_from_string(mail_content)
+    to = list(set([addr.strip() for addr in re.split(r'[,;]', mail['to'] or '') if '@' in addr]))
+    cc = list(set([addr.strip() for addr in re.split(r'[,;]', mail['cc'] or '') if '@' in addr]))
+    bcc = list(set([addr.strip() for addr in re.split(r'[,;]', mail['bcc'] or '') if '@' in addr]))
+
+    receivers = list(set(to + cc + bcc))
+
+    mails = []
+
+    while receivers:
+        batch_receivers = receivers[:batch_size]
+        receivers[:batch_size] = []
+        sub_mail = email.message_from_string(mail_content)
+
+        del sub_mail['to']
+        sub_mail['To'] = ', '.join([addr for addr in to if addr in batch_receivers])
+
+        del sub_mail['cc']
+        sub_mail['Cc'] = ', '.join([addr for addr in cc if addr in batch_receivers])
+
+        del sub_mail['bcc']
+        sub_mail['Bcc'] = ', '.join([addr for addr in bcc if addr in batch_receivers])
+
+        mails.append(sub_mail.as_string())
+
+    return mails
+    
