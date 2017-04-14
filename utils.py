@@ -67,9 +67,9 @@ def split_mail(mail_content, batch_size):
 
     mail = email.message_from_string(mail_content)
 
-    to = get_receipients(mail, 'to')
-    cc = get_receipients(mail, 'cc')
-    bcc = get_receipients(mail, 'bcc')
+    to = get_recipients(mail, 'to')
+    cc = get_recipients(mail, 'cc')
+    bcc = get_recipients(mail, 'bcc')
     receivers = list(set(to + cc + bcc))
 
     mails = []
